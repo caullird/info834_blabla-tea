@@ -21,10 +21,21 @@ var ioEvents = function(io) {
 
 		socket.join('user_room_'+socket.request.session.passport.user);
 
-		User.findById(socket.request.session.passport.user, function (err, user) {
-			User.setStatus(user, true);
-			socket.broadcast.emit('updateUsersList', user);
+		let online = [];
+		let rooms = socket.adapter.rooms;
+		let keys = Object.keys(rooms).filter(key => key.includes('user_room_'));
+		keys.forEach(key => {
+			let userID = key.split('_')[2];
+			if(userID !== socket.request.session.passport.user && rooms[key].length > 0){
+				online.push(userID);
+			}
 		});
+		socket.emit('updateUsersList', online, true);
+
+		User.findById(socket.request.session.passport.user, function(err, user) {
+			socket.broadcast.emit('updateUsersList', user, true);
+		});
+
 
 		// When a new message arrives
 		socket.on('newMessage', function(message) {
@@ -41,10 +52,7 @@ var ioEvents = function(io) {
 				return;
 			}
 
-			User.findById(socket.request.session.passport.user, function (err, user) {
-				User.setStatus(user, false);
-				socket.broadcast.emit('updateUsersList', user);
-			});
+			socket.broadcast.emit('updateUsersList', socket.request.session.passport.user, false);
 		});
 	});
 

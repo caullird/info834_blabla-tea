@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <title>Chat IO</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
   </head>
   <body>
     <div class="container clearfix">
       <div class="people-list" id="people-list">
         <ul class="list">
           <li class="clearfix" data-id="0">
-            <img class="avatar" src="https://api.minimalavatars.com/avatar/Accueil/png" alt="avatar" />
+            <img src="https://api.minimalavatars.com/avatar/Accueil/png" alt="avatar" />
             <div class="about">
               <div class="name">Maverick & Dorian</div>
               <div class="status">
@@ -22,7 +21,7 @@
           </li>
           <% users.forEach(function(user) { %>
             <li class="clearfix" data-id="<%= user.id %>">
-              <img class="avatar" src="https://api.minimalavatars.com/avatar/<%= user.username %>/png" alt="avatar" />
+              <img src="https://api.minimalavatars.com/avatar/<%= user.username %>/png" alt="avatar" />
               <div class="about">
                 <div class="name"><%= user.username %></div>
                 <div class="status">
@@ -32,9 +31,6 @@
               <div class="new-message"></div>
             </li>
           <% }); %>
-
-
-          
         </ul>
       </div>
       
@@ -46,6 +42,9 @@
             <div class="chat-with">Chat with Maverick & Dorian</div>
             <div class="chat-num-messages">already 4 messages</div>
           </div>
+          <div class="disconnect">
+            <a href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+          </div>
         </div> <!-- end chat-header -->
         
         <div class="chat-history">
@@ -56,7 +55,7 @@
                 <span class="message-data-name" >Maverick</span>
                 
               </div>
-              <div class="message my-message  float-right">
+              <div class="message my-message float-right">
                 Bienvenue sur notre application de blabla en ligne.
               </div>
             </li>

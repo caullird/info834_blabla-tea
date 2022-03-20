@@ -38,15 +38,6 @@ var isAuthenticated = function (req, res, next) {
 	}
 }
 
-/**
- * Set user status.
- *
- */
-var setStatus = function (user, status, callback) {
-	user.connected = status;
-	user.save(callback);
-}
-
 
 module.exports = { 
 	create, 
@@ -54,6 +45,5 @@ module.exports = {
 	findOne, 
 	findById, 
 	findConversations, 
-	isAuthenticated,
-	setStatus
+	isAuthenticated
 };

@@ -17,7 +17,7 @@ function getMessages(e) {
     $('.chat').replaceWith(accueil.outerHTML)
   } else {
     $("#message-to-send").attr('disabled', false);
-    $(".chat-header img").attr('src', e.currentTarget.querySelector(".avatar").src);
+    $(".chat-header img").attr('src', e.currentTarget.querySelector("img").src);
     $('.chat-num-messages').text('Messages loading...');
 
     $.ajax({url: '/chat/' + to.id, success: function(messages){
@@ -38,21 +38,19 @@ function app(user) {
   // When socket connects, get a list of chatdashboad
   socket.on('connect', function () {
     // Update users list upon emitting updateUsersList event
-    socket.on('updateUsersList', function(user) {
-        helpers.updateUsersList(user);
+    socket.on('updateUsersList', function(users, status) {
+        helpers.updateUsersList(users, status);
     });
 
     socket.on('addMessage', function(message) {
       message.isMine = false;
-      console.log(message)
       if (!messagesList[message.from]) messagesList[message.from] = [];
       messagesList[message.from].push(message);
 
       if (to && message.from == to.id) {
         helpers.addMessage(message);
-        $(".chat-history").animate({
-          scrollTop: $($('.message').toArray()).get(-1).offsetTop
-        }, 2000);
+        helpers.scrollToLastMessage();
+        $('.chat-num-messages').text(`already ${parseInt($('.chat-num-messages').text().split(" ")[1])+1} messages`);
       } else {
         $('*[data-id="'+message.from+'"] .new-message').html("<i class='fa fa-circle me'></i>");
       }
@@ -77,6 +75,8 @@ function app(user) {
         message.isMine = true;
         messagesList[to.id].push(message);
         helpers.addMessage(message);
+        helpers.scrollToLastMessage();
+        $('.chat-num-messages').text(`already ${parseInt($('.chat-num-messages').text().split(" ")[1])+1} messages`);
       }
     });
   });
@@ -89,31 +89,41 @@ var helpers = {
   },
 
   // Update users list
-  updateUsersList: function(user){
-    console.log(user._id)
+  updateUsersList: function(users, status){
 
-    let userHTML = $('.people-list ul li').toArray().find(x => x.querySelector(".name").innerText == user.username);
+    users = Array.isArray(users) ? users : [users];
 
-    if(userHTML){     
-      if (user.connected) {
-        userHTML.querySelector(".status").innerHTML = '<i class="fa fa-circle online"></i> online';
+    users.forEach(user => {
+      let userid = user._id ? user._id : user;
+
+      let userHTML = $('.people-list ul li').toArray().find(x => x.dataset.id == userid);
+
+      console.log(userid)
+      console.log(userHTML)
+  
+      if(userHTML){  
+        if (status) {
+          userHTML.querySelector(".status").innerHTML = '<i class="fa fa-circle online"></i> online';
+        } else {
+          userHTML.querySelector(".status").innerHTML = '<i class="fa fa-circle offline"></i> offline';
+        }
       } else {
-        userHTML.querySelector(".status").innerHTML = '<i class="fa fa-circle offline"></i> offline';
-      }
-    } else {
-        let userHTML = `<li class="clearfix" data-id="${user._id}">
-          <img class="avatar" src="https://api.minimalavatars.com/avatar/${user.username}/png" alt="avatar" />
-          <div class="about">
-            <div class="name">${user.username}</div>
-            <div class="status">
-              <i class="fa fa-circle online"></i> online
+          let userHTML = `<li class="clearfix" data-id="${user._id}">
+            <img class="avatar" src="https://api.minimalavatars.com/avatar/${user.username}/png" alt="avatar" />
+            <div class="about">
+              <div class="name">${user.username}</div>
+              <div class="status">
+                <i class="fa fa-circle ${status ? "online" : "offline"}"></i> ${status ? "online" : "offline"}
+              </div>
             </div>
-          </div>
-        </li>`
+          </li>`
+  
+          $('.people-list ul').append(userHTML);
+          $('.people-list ul li:last-child').on('click', getMessages)
+      }
+      
+    })
 
-        $('.people-list ul').append(userHTML);
-        $('.people-list ul li:last-child').on('click', getMessages)
-    }
   },
 
   updateMessageList: function(me, to, messages){
@@ -124,6 +134,15 @@ var helpers = {
         messagesList[user].push(message);
       }
     });
+  },
+
+  scrollToLastMessage: function(){
+    messages = $('.message').toArray()
+    if (messages.length > 0) {
+      $(".chat-history").animate({
+        scrollTop: $(messages).get(-1).offsetTop
+      }, 0);
+    }
   },
 
   resetChat: function(to){
@@ -145,12 +164,7 @@ var helpers = {
       $('.chat-num-messages').text('no messages');
     }
 
-    messages = $('.message').toArray()
-    if (messages.length > 0) {
-      $(".chat-history").animate({
-        scrollTop: $(messages).get(-1).offsetTop
-      }, 2000);
-    }
+    helpers.scrollToLastMessage();
   },
 
   addMessage: function(message){

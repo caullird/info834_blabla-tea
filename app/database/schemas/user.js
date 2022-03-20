@@ -9,10 +9,8 @@ const SALT_WORK_FACTOR = 10;
  *
  */
 var UserSchema = new Mongoose.Schema({
-    username: { type: String, required: true},
-    password: { type: String, default: null },
-    connected: { type: Boolean, default: false },
-    lastConnection: { type: Date, default: Date.now },
+    username: { type: String, unique: true, required: true},
+    password: { type: String, default: null }
 });
 
 /**
