@@ -1,6 +1,7 @@
 *, *:before, *:after {
   box-sizing: border-box;
 }
+
 body {
   background: #C5DDEB;
   font: 14px/20px "Lato", Arial, sans-serif;
@@ -8,9 +9,13 @@ body {
   color: white;
 }
 
+#logo{
+  height: 175px;
+}
+
 /* Dashboard Page */
 .container {
-  margin: 2% auto;
+  margin: 1% auto;
   width: 750px;
   background: #444753;
   border-radius: 5px;
@@ -199,8 +204,9 @@ body {
 /*  Login Page */
 .login-page {
   width: 400px;
-  padding: 8% 0 0;
+  padding: 0% 0 0;
   margin: auto;
+  overflow-y: hidden; 
 }
 .form {
   position: relative;
