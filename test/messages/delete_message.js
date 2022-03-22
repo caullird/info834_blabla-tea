@@ -28,13 +28,4 @@ describe('Deleting a user', () => {
         done();
       });
   });
-
-  // it('removes a user', (done) => {
-  //   User.findOneAndRemove({ username: 'MPH' })
-  //     .then(() => User.findOne({ username: 'MPH' }))
-  //     .then((user) => {
-  //       assert(user === null);
-  //       done();
-  //     });
-  // });
 })

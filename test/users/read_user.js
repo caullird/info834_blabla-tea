@@ -11,7 +11,7 @@ beforeEach(() => {
 describe('Reading user details', () => {
     it('Finds user with the name of MPH', (done) => {
         User.findOne({ username: 'MPH' })
-            .then((pokemon) => {
+            .then((users) => {
                 assert(user.username === 'MPH'); 
                 done();
             });
