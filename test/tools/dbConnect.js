@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+var config = require('../../config');
 
 mongoose.Promise = global.Promise;
-const MONGODB_URI = 'mongodb://127.0.0.1:27017/chat';
+const MONGODB_URI = 'mongodb://' + config.db.host + ':' + config.db.port + '/' + config.db.name;
 mongoose.connect(MONGODB_URI);
 
 mongoose.connection
